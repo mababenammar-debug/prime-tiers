@@ -538,12 +538,12 @@ function load(){
   }catch(e){ state.players = seedPlayers(); }
 }
 function findP(id){ return state.players.find(function(p){ return p.id===id; }); }
-541: /* save locally + push to cloud (called by every admin action) */
+ /* save locally + push to cloud (called by every admin action) */
      function save(){
        try{ localStorage.setItem(KEY, JSON.stringify({players:state.players})); }catch(e){}
        cloudPush();
      }
-542: /* ================= FIREBASE SYNC (the automatic part) ================= */
+
 /* ================= FIREBASE SYNC (the automatic part) ================= */
 function initFirebase(){
   try{
