@@ -42,6 +42,12 @@ body{
 button{ font-family:inherit; cursor:pointer; }
 input, select{ color:#e2e8f0; font-family:inherit; }
 a{ color:inherit; }
+.pts-badge{ display:inline-flex; align-items:center; justify-content:center; min-width:54px; height:24px; padding:0 10px;
+  border-radius:8px; font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:12px;
+  color:#6ee7b7; background:rgba(16,185,129,.10); border:1px solid rgba(16,185,129,.45);
+  box-shadow:0 0 12px rgba(16,185,129,.15); white-space:nowrap; }
+.pts-title{ font-size:10px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#a78bfa; }
+
 @media (prefers-reduced-motion: reduce){ *,*::before,*::after{ transition:none !important; animation:none !important; } }
 
 /* ============ CARDS / GLASS ============ */
@@ -583,14 +589,31 @@ function cloudPush(){
 
 /* ================= RANKING LOGIC ================= */
 function strength(t){ var i = TIERS.indexOf(t); return i < 0 ? 0 : 10 - i; }
-function overallTier(p){
-  var vals = PLAY_MODES.map(function(m){ return strength(p.tiers[m]); });
-  if(!vals.length) return "LT5";
-  var avg = vals.reduce(function(a,b){ return a+b; },0) / vals.length;
-  var best = Math.max.apply(null, vals);
-  var score = avg*0.75 + best*0.25;
-  return TIERS[clampN(Math.round(10-score),0,9)];
+/* ===== OVERALL = POINTS SYSTEM (like mctiers.com) ===== */
+var TIER_POINTS = { HT1:60, LT1:45, HT2:30, LT2:20, HT3:10, LT3:6, HT4:4, LT4:3, HT5:2, LT5:1 };
+function pointsFor(p){
+  var s = 0;
+  PLAY_MODES.forEach(function(m){ s += (TIER_POINTS[p.tiers && p.tiers[m]] || 0); });
+  return s;
 }
+function overallTitle(pts){
+  if(pts >= 400) return "Combat Grandmaster";
+  if(pts >= 250) return "Combat Master";
+  if(pts >= 100) return "Combat Ace";
+  if(pts >= 50)  return "Combat Specialist";
+  if(pts >= 20)  return "Cadet";
+  if(pts >= 10)  return "Novice";
+  if(pts >= 1)   return "Rookie";
+  return "Unranked";
+}
+function rankedOverall(){
+  return state.players.filter(function(p){ return !p.banned; })
+    .map(function(p){ var pts = pointsFor(p); return { p:p, points:pts, title:overallTitle(pts) }; })
+    .sort(function(a,b){
+      return b.points - a.points || cmpVec(a.p,b.p) || a.p.username.localeCompare(b.p.username);
+    });
+}
+
 function vec(p){ return PLAY_MODES.map(function(m){ return strength(p.tiers[m]); }).sort(function(a,b){ return b-a; }); }
 function cmpVec(a,b){
   var va = vec(a), vb = vec(b);
@@ -694,13 +717,15 @@ function discordBar(){
     '</div></section>';
 }
 function viewHome(){
-  var top = rankedOverall().slice(0,3);
-  var podium = '<div class="podium-row">' + top.map(function(x,i){
-    return '<div class="glass podium-card row-lift" data-player="'+x.p.id+'">' + rkBadge(i+1) +
-      avatarImg(x.p,52) +
-      '<div class="pc-name" style="font-size:14px">'+esc(x.p.username)+(x.p.verified?' <span class="vbadge">✔</span>':'')+'</div>' +
-      tierBadge(x.tier) + '</div>';
-  }).join("") + '</div>';
+ var podium = '<div class="podium-row">' + top.map(function(x,i){
+  return '<div class="glass podium-card row-lift" data-player="'+x.p.id+'">' + rkBadge(i+1) +
+    avatarImg(x.p,52) +
+    '<div class="pc-name" style="font-size:14px">'+esc(x.p.username)+(x.p.verified? '<span class="vbadge">✔</span>':'')+'</div>' +
+    '<div class="pts-badge">'+x.points+' pts</div>' +
+    '<div class="pts-title">'+esc(x.title)+'</div>' +
+    '</div>';
+}).join("") + '</div>';
+
   return '<section class="hero">' +
     '<div class="brand-logo logo-xl" style="align-items:center"><span class="logo-row"><span class="logo-prime">PRIME</span><span class="logo-tiers">TIERS</span></span><span class="logo-underline"></span></div>' +
     '<div class="hero-kicker">MINECRAFT PVP TIER LIST</div>' +
@@ -763,7 +788,8 @@ function overallList(){
       avatarImg(x.p,40) +
       '<div class="lb-main"><div class="lb-id">' +
         '<div class="lb-name">'+esc(x.p.username)+(x.p.verified?' <span class="vbadge">✔</span>':'')+(x.p.banned?' <span class="banned-chip">BANNED</span>':'')+'</div>' +
-        '<div class="lb-sub">'+esc(x.p.title||"—")+' '+capBadge(x.p.region)+'</div>' +
+        '<div class="lb-sub">'+esc(x.p.title||"—")+' '+capBadge(x.p.region)+
+        ' <span class="pts-badge">'+x.points+' pts</span> <span class="pts-title">'+esc(x.title)+'</span>'+'</div>' +
       '</div></div>' +
       '<div class="lb-strip">' + PLAY_MODES.map(function(m){
         return '<span class="strip-cell">'+itemImg(m,20)+tierBadge(x.p.tiers[m])+'</span>';
@@ -782,7 +808,7 @@ function viewInfo(){
     '<div class="info-grid">' +
     '<div class="glass info-card"><h3>🏆 How rankings work</h3>' +
       '<p>Each gamemode has its own page — open it from the hotbar and you see the best players in that mode only.</p>' +
-      '<p>The Overall page mixes every gamemode, so the most complete players rise to the top.</p></div>' +
+      '<p>The Overall page uses the <b>points system</b>: each tier gives points (HT1=60, LT1=45, HT2=30, LT2=20, HT3=10, LT3=6, HT4=4, LT4=3, HT5=2, LT5=1) summed across all gamemodes. 400+ pts = Combat Grandmaster, 250+ = Combat Master, 100+ = Combat Ace.</p></div>' +
     '<div class="glass info-card"><h3>📊 Tier system</h3>' +
       '<p>HT = High Tier, LT = Low Tier. HT1 is the best rank possible.</p>' +
       '<div class="tier-demo-row">'+demo+'</div></div>' +
