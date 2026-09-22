@@ -620,13 +620,7 @@ function cmpVec(a,b){
   for(var i=0;i<va.length;i++){ var d = (vb[i]||0)-(va[i]||0); if(d) return d; }
   return 0;
 }
-function rankedOverall(){
-  return state.players.filter(function(p){ return !p.banned; })
-    .map(function(p){ return { p:p, tier:overallTier(p) }; })
-    .sort(function(a,b){
-      return strength(b.tier)-strength(a.tier) || cmpVec(a.p,b.p) || a.p.username.localeCompare(b.p.username);
-    });
-}
+
 function rankMap(){
   var m = {};
   rankedOverall().forEach(function(x,i){ m[x.p.id] = i+1; });
@@ -866,7 +860,8 @@ function closeModal(){ $("#modal-root").innerHTML = ""; }
 
 function openPlayerModal(id){
   var p = findP(id); if(!p) return;
-  var ov = overallTier(p);
+  var pts = pointsFor(p);
+  var ov = { points:pts, title:overallTitle(pts) };
   var rk = rankMap()[p.id];
   openModal(
     '<div class="modal-head"><h3>PLAYER PROFILE</h3><button type="button" class="x-btn" data-close>✕</button></div>' +
@@ -875,7 +870,7 @@ function openPlayerModal(id){
       '<div style="min-width:0">' +
         '<div class="prof-name">'+esc(p.username)+(p.verified?' <span class="vbadge" title="Verified">✔</span>':'')+'</div>' +
         '<div class="prof-title">'+esc(p.title||"—")+'</div>' +
-        '<div class="prof-meta">'+(rk?posBadge(rk,true):"")+' '+capBadge(p.region)+' '+tierBadgeXL(ov)+'<span class="text-[10px] text-slate-500">overall rank</span></div>' +
+        '<div class="prof-meta">'+(rk?posBadge(rk,true):"")+' '+capBadge(p.region)+' <span class="pts-badge">'+ov.points+' pts</span> <span class="pts-title">'+esc(ov.title)+'</span><span class="text-[10px] text-slate-500">overall rank</span></div>' +
       '</div></div>' +
     '<div class="prof-tiers">' + PLAY_MODES.map(function(m){
       return '<div class="prof-tier-row"><span class="prof-mode">'+itemImg(m,22)+' '+esc(m)+'</span>'+tierBadge(p.tiers[m])+'</div>';
