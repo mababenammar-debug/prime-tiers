@@ -711,15 +711,14 @@ function discordBar(){
     '</div></section>';
 }
 function viewHome(){
- var podium = '<div class="podium-row">' + top.map(function(x,i){
-  return '<div class="glass podium-card row-lift" data-player="'+x.p.id+'">' + rkBadge(i+1) +
+ var podium = '<div class="podium-row">' + rankedOverall().slice(0,3).map(function(x,i){
+  return '<div class="glass podium-card row-lift" data-player="'+x.p.id+'">' + posBadge(i+1) +
     avatarImg(x.p,52) +
     '<div class="pc-name" style="font-size:14px">'+esc(x.p.username)+(x.p.verified? '<span class="vbadge">✔</span>':'')+'</div>' +
     '<div class="pts-badge">'+x.points+' pts</div>' +
     '<div class="pts-title">'+esc(x.title)+'</div>' +
     '</div>';
 }).join("") + '</div>';
-
   return '<section class="hero">' +
     '<div class="brand-logo logo-xl" style="align-items:center"><span class="logo-row"><span class="logo-prime">PRIME</span><span class="logo-tiers">TIERS</span></span><span class="logo-underline"></span></div>' +
     '<div class="hero-kicker">MINECRAFT PVP TIER LIST</div>' +
