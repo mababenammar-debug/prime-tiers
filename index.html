@@ -429,7 +429,7 @@ function clampN(n,a,b){ return Math.max(a,Math.min(b,n)); }
 function fmtTime(t){ var d=new Date(t); return ("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)+":"+("0"+d.getSeconds()).slice(-2); }
 
 /* ================= CONSTANTS ================= */
-var ADMIN_CODE_CHARS = [80,114,105,109,101,88,57,45,75,114,121,112,116,111,110,35,55,51];
+var ADMIN_CODE_CHARS = [78,101,120,55,35,80,114,105,109,101,86,97,117,108,116];
 var ADMIN_CODE = String.fromCharCode.apply(null, ADMIN_CODE_CHARS);
 var SESSION_MS = 30*60*1000;
 var MAX_ATTEMPTS = 5;
