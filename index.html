@@ -58,7 +58,10 @@ a{ color:inherit; }
   backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
 }
-.wrap{ max-width:1180px; margin:0 auto; padding:0 14px 40px; min-width:0; }
+html, body { margin:0; padding:0; width:100%; max-width:100%; overflow-x:hidden; }
+body{ min-height:100vh; display:flex; flex-direction:column; }
+#view{ flex:1; min-width:0; }
+.wrap{ width:min(1180px,calc(100% - 28px)); max-width:1180px; margin:0 auto; padding:0 14px 40px; min-width:0; }
 .text-glow{ text-shadow:0 0 18px rgba(16,185,129,.45); }
 .item-shadow{ filter:drop-shadow(0 2px 6px rgba(0,0,0,.65)); }
 .row-lift{ transition:all .3s ease-in-out; }
@@ -309,17 +312,18 @@ a{ color:inherit; }
 .skin-preview img{ height:150px; image-rendering:pixelated; filter:drop-shadow(0 6px 16px rgba(0,0,0,.6)); }
 
 /* ============ PLAYER PROFILE MODAL ============ */
-.prof-top{ display:flex; gap:16px; align-items:center; margin-bottom:16px; }
+.prof-top{ display:flex; gap:16px; align-items:flex-start; margin-bottom:16px; width:100%; min-width:0; flex-wrap:wrap; }
 .prof-skin{ width:86px; height:150px; flex-shrink:0; display:grid; place-items:center; border-radius:12px;
   background:rgba(255,255,255,.03); border:1px solid rgba(139,92,246,.2); overflow:hidden; }
 .prof-skin img{ height:140px; image-rendering:pixelated; }
-.prof-name{ font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:20px; color:#f8fafc; display:flex; align-items:center; gap:8px; }
-.prof-title{ color:#94a3b8; font-size:13px; margin-top:2px; }
-.prof-meta{ display:flex; gap:10px; align-items:center; margin-top:10px; flex-wrap:wrap; }
-.prof-tiers{ display:flex; flex-direction:column; gap:6px; }
+.prof-info{ flex:1 1 220px; min-width:0; }
+.prof-name{ font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:20px; color:#f8fafc; display:flex; align-items:center; gap:8px; min-width:0; overflow-wrap:anywhere; }
+.prof-title{ color:#94a3b8; font-size:13px; margin-top:2px; min-width:0; overflow-wrap:anywhere; }
+.prof-meta{ display:flex; gap:10px; align-items:center; margin-top:10px; flex-wrap:wrap; min-width:0; }
+.prof-tiers{ display:flex; flex-direction:column; gap:6px; min-width:0; }
 .prof-tier-row{ display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:10px;
-  background:rgba(255,255,255,.03); border:1px solid rgba(139,92,246,.12); }
-.prof-mode{ flex:1; font-size:12px; font-weight:600; color:#cbd5e1; }
+  background:rgba(255,255,255,.03); border:1px solid rgba(139,92,246,.12); min-width:0; }
+.prof-mode{ flex:1 1 auto; font-size:12px; font-weight:600; color:#cbd5e1; min-width:0; overflow-wrap:anywhere; }
 
 /* ============ LEGAL MODAL ============ */
 .legal h4{ margin:14px 0 6px; font-family:'Space Grotesk',sans-serif; font-size:13px; color:rgb(var(--acc)); letter-spacing:.05em; text-transform:uppercase; }
@@ -331,14 +335,15 @@ a{ color:inherit; }
 /* ============ FOOTER ============ */
 .footer{ margin-top:34px; padding:22px 20px 24px; display:flex; flex-direction:column; gap:14px; width:100%; max-width:100%; min-width:0; box-sizing:border-box; }
 .footer > *{ min-width:0; }
-.foot-brand{ display:flex; align-items:center; gap:10px; justify-content:center; max-width:100%; }
-.foot-links{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; max-width:100%; }
+.foot-brand{ display:flex; align-items:center; gap:10px; justify-content:center; max-width:100%; min-width:0; }
+.foot-links{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; max-width:100%; min-width:0; }
 .flink{ height:30px; padding:0 13px; display:inline-flex; align-items:center; border-radius:999px;
   background:rgba(255,255,255,.03); border:1px solid rgba(139,92,246,.2); color:#94a3b8;
   font-size:11px; font-weight:700; transition:all .25s ease-in-out; max-width:100%; }
 .flink:hover{ color:#f1f5f9; border-color:rgba(var(--acc),.5); transform:translateY(-1px); }
-.foot-disc{ text-align:center; color:#3f3a52; font-size:10.5px; line-height:1.7; max-width:640px; width:100%; margin:0 auto; overflow-wrap:anywhere; word-break:break-word; white-space:normal; }
-.foot-copy{ text-align:center; color:#2c2740; font-size:10px; max-width:100%; overflow-wrap:anywhere; word-break:break-word; }
+.foot-disc{ text-align:center; color:#3f3a52; font-size:10.5px; line-height:1.7; max-width:640px; width:100%; margin:0 auto; overflow-wrap:anywhere; word-break:break-word; white-space:normal; min-width:0; }
+.foot-copy{ text-align:center; color:#2c2740; font-size:10px; max-width:100%; overflow-wrap:anywhere; word-break:break-word; min-width:0; }
+.dc-icon{ flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; }
 
 /* ============ MISC ============ */
 .empty-box{ border:1px dashed rgba(139,92,246,.3); border-radius:14px; padding:26px; text-align:center; color:#64748b; font-size:13px; margin-top:14px; }
@@ -401,7 +406,9 @@ body.modal-open .glass{ backdrop-filter:none !important; -webkit-backdrop-filter
     </div>
     <div class="foot-links">
       <a class="dc-icon" style="width:34px;height:34px;border-radius:10px" href="https://discord.gg/xUmcxRg58" target="_blank" rel="noopener noreferrer" aria-label="Discord" title="Join our Discord">
-        <svg viewBox="0 0 24 24" fill="currentColor" style="width:17px;height:17px" aria-hidden="true"><path d="M20.317 4.369a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037 19.736 19.736 0 0 0-4.885 1.515.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.058a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.009c.12.099.246.198.373.292a.₀７７.₀７７ ０ ０ １−．００６．１２７ １２．３ １２．３ ０ ０ １−１．８７３．８９２．₀７７．₀７７ ０ ０ ０−．０４１．１０７c．３６．６９８．７７２ １．３６２ １．２２５ １．９９３a．₀７６．₀７６ ０ ０ ０ ＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆nbsp;＆&nbsp;
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:17px;height:17px" aria-hidden="true">
+          <path d="M20.317 4.369a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037 19.736 19.736 0 0 0-4.885 1.515.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.058a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.029 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.055c.5-5.177-.838-9.674-3.549-13.66a.06.06 0 0 0-.031-.029zM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+        </svg>
       </a>
       <button type="button" class="flink" data-legal="terms">Terms of Service</button>
       <button type="button" class="flink" data-legal="privacy">Privacy Policy</button>
