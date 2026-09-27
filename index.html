@@ -342,6 +342,7 @@ body{ min-height:100vh; display:flex; flex-direction:column; }
 .prof-points-unit{ color:#a7f3d0; font-size:11px; font-weight:700; }
 .prof-meta{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; min-width:0; }
 .prof-meta .cap{ flex-shrink:0; }
+.prof-overall{ display:inline-flex; align-items:center; gap:7px; color:#94a3b8; font-size:10px; font-weight:700; }
 .prof-tiers{ display:flex; flex-direction:column; gap:8px; min-width:0; }
 .prof-tier-row{ display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px;
   background:rgba(255,255,255,.025); border:1px solid rgba(139,92,246,.12); min-width:0;
@@ -483,7 +484,7 @@ var SKIN_FACE_A = "https://crafthead.net/avatar/";
 var SKIN_FACE_B = "https://mc-heads.net/avatar/";
 var SKIN_BODY_A = "https://mc-heads.net/body/";
 var SKIN_BODY_B = "https://crafthead.net/body/";
-var MODES = ["Overall","Crystal","Sword","Axe","Mace","NetheritePot","Diamond Pot","UHC","Diamond SMP","SMP","Netherite Spear"];
+var MODES = ["Overall","Crystal","Sword","Axe","Mace","NetheritePot","Diamond Pot","UHC","Diamond SMP","SMP","Spear Mace"];
 var PLAY_MODES = MODES.slice(1);
 var TIERS = ["HT1","LT1","HT2","LT2","HT3","LT3","HT4","LT4","HT5","LT5"];
 var REGIONS = ["NA","EU","AS","AU"];
@@ -491,7 +492,7 @@ var MODE_ICONS = {
   "Overall":"nether_star.png", "Crystal":"end_crystal.png", "Sword":"diamond_sword.png",
   "Axe":"diamond_axe.png", "Mace":"mace.png", "NetheritePot":"netherite_helmet.png", "Diamond Pot":"splash_potion.png",
   "UHC":"golden_apple.png", "Diamond SMP":"diamond_helmet.png", "SMP":"ender_pearl.png",
-  "Netherite Spear":"netherite_spear.png"
+  "Spear Mace":"netherite_spear.png"
 };
 var ITEM_SCALE = { "diamond_helmet.png":.84, "splash_potion.png":.78,"netherite_helmet.png":.84, "nether_star.png":.9, "end_crystal.png":.9 };
 
@@ -505,8 +506,8 @@ function addLog(msg){ adminLog.unshift({ t:Date.now(), msg:msg }); if(adminLog.l
 
 /* ================= SEED DATA (shown until cloud has data) ================= */
 function mk(id,username,region,title,verified,tiers){
-  if(tiers["Spear Mace"] && !tiers["Netherite Spear"]) tiers["Netherite Spear"] = tiers["Spear Mace"];
-  delete tiers["Spear Mace"];
+  if(tiers["Netherite Spear"] && !tiers["Spear Mace"]) tiers["Spear Mace"] = tiers["Netherite Spear"];
+  delete tiers["Netherite Spear"];
   return { id:id, username:username, region:region, title:title, verified:verified, banned:false, isRetired:false, tiers:tiers, order:{} };
 }
 function seedPlayers(){
@@ -540,13 +541,13 @@ function sanitize(arr){
     if(u.length < 2) return;
     var t = {};
     PLAY_MODES.forEach(function(m){
-      var tier = p.tiers && (p.tiers[m] || (m==="Netherite Spear" && p.tiers["Spear Mace"]));
+      var tier = p.tiers && (p.tiers[m] || (m==="Spear Mace" && p.tiers["Netherite Spear"]));
       if(TIERS.indexOf(tier) >= 0) t[m] = tier;
     });
     var order = (p.order && typeof p.order==="object") ? p.order : {};
-    if(order["Netherite Spear"]==null && order["Spear Mace"]!=null){
+    if(order["Spear Mace"]==null && order["Netherite Spear"]!=null){
       order = Object.assign({},order);
-      order["Netherite Spear"] = order["Spear Mace"];
+      order["Spear Mace"] = order["Netherite Spear"];
     }
     out.push({
       id:String(p.id||("p"+Date.now()+Math.random())).slice(0,40),
@@ -671,8 +672,8 @@ function itemImg(mode,size){
   var icon = MODE_ICONS[mode]; if(!icon) return "";
   var sc = ITEM_SCALE[icon] || 1;
   var px = Math.round(size*sc);
-  var base = mode==="Netherite Spear" ? ITEM_BASE3 : ITEM_BASE;
-  var fallbackBase = mode==="Netherite Spear" ? ITEM_BASE : ITEM_BASE2;
+  var base = mode==="Spear Mace" ? ITEM_BASE3 : ITEM_BASE;
+  var fallbackBase = mode==="Spear Mace" ? ITEM_BASE : ITEM_BASE2;
   var chain = [fallbackBase+icon].map(encodeURIComponent).join("|");
   var onerr = 'var f=(this.dataset.fb||"").split("|").filter(Boolean);if(f.length){this.dataset.fb=f.slice(1).join("|");this.src=decodeURIComponent(f[0]);}else{this.style.display="none";}';
   return '<span class="item-box" style="position:relative;width:'+size+'px;height:'+size+'px">' +
@@ -890,6 +891,7 @@ function openPlayerModal(id){
   var p = findP(id); if(!p) return;
   var pts = pointsFor(p);
   var ov = { points:pts, title:overallTitle(pts) };
+  var rk = rankMap()[p.id];
   openModal(
     '<div class="modal-head"><h3>PLAYER PROFILE</h3><button type="button" class="x-btn" data-close>✕</button></div>' +
     '<div class="prof-card">' +
@@ -905,7 +907,7 @@ function openPlayerModal(id){
       '</div>' +
       '<div class="prof-card-foot">' +
         '<div class="prof-points"><span class="prof-points-label">Points</span><strong>'+ov.points+'</strong><span class="prof-points-unit">pts</span></div>' +
-        '<div class="prof-meta">'+capBadge(p.region)+'</div>' +
+        '<div class="prof-meta">'+capBadge(p.region)+(rk?'<span class="prof-overall">Overall rank '+posBadge(rk,true)+'</span>':'')+'</div>' +
       '</div>' +
     '</div>' +
     '<div class="prof-tiers">' + PLAY_MODES.map(function(m){
