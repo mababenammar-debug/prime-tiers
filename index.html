@@ -364,8 +364,9 @@ a{ color:inherit; }
   .prof-meta{ justify-content:center; }
 }
 /* modal open — freeze page + kill blur behind */
-body.modal-open{ position:fixed; left:0; right:0; width:100%; overflow:hidden; }
+body.modal-open{ overflow:hidden; }
 body.modal-open .glass{ backdrop-filter:none !important; -webkit-backdrop-filter:none !important; }
+
 
 </style>
 </head>
@@ -854,8 +855,14 @@ function viewAdmin(){
 }
 
 /* ================= MODALS ================= */
-function openModal(html){ $("#modal-root").innerHTML = '<div class="modal-back"><div class="modal glass" role="dialog" aria-modal="true">'+html+'</div></div>';document.body.classList.add("modal-open") }
-function closeModal(){ $("#modal-root").innerHTML = "";document.body.classList.remove("modal-open"); }
+function openModal(html){
+  document.getElementById("modal-root").innerHTML = '<div class="modal-back"><div class="modal glass" role="dialog" aria-modal="true">'+html+'</div></div>';
+  document.body.classList.add("modal-open");
+}
+function closeModal(){
+  document.getElementById("modal-root").innerHTML = "";
+  document.body.classList.remove("modal-open");
+}
 
 function openPlayerModal(id){
   var p = findP(id); if(!p) return;
@@ -1088,6 +1095,9 @@ window.addEventListener("unhandledrejection", function(e){ showErr(String(e.reas
 
 /* ================= EVENTS ================= */
 document.addEventListener("click", function(e){
+  if(e.target.closest && e.target.closest("[data-close]")){ closeModal(); return; }
+  if(e.target.classList && e.target.classList.contains("modal-back")){ closeModal(); return; }
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeModal(); });
   var t = e.target;
   var lg = t.closest("[data-legal]");
   if(lg){ openLegal(lg.dataset.legal); return; }
