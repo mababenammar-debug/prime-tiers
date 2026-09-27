@@ -312,16 +312,28 @@ body{ min-height:100vh; display:flex; flex-direction:column; }
 .skin-preview img{ height:150px; image-rendering:pixelated; filter:drop-shadow(0 6px 16px rgba(0,0,0,.6)); }
 
 /* ============ PLAYER PROFILE MODAL ============ */
-.prof-top{ display:flex; gap:16px; align-items:center; margin-bottom:18px; width:100%; min-width:0; flex-wrap:wrap; }
+.prof-card{ position:relative; display:flex; flex-direction:column; gap:16px; width:100%; min-width:0;
+  padding:18px 18px 14px; border-radius:18px; border:1px solid rgba(168,85,247,.28);
+  background:linear-gradient(180deg, rgba(15,23,42,.8), rgba(15,23,42,.64));
+  box-shadow:0 14px 34px rgba(15,23,42,.38), 0 0 0 1px rgba(168,85,247,.06); }
+.prof-top{ display:flex; gap:16px; align-items:center; margin:0; width:100%; min-width:0; flex-wrap:wrap; }
 .prof-skin{ width:92px; height:150px; flex-shrink:0; display:grid; place-items:center; border-radius:14px;
   background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); border:1px solid rgba(139,92,246,.22); overflow:hidden;
   box-shadow:0 0 18px rgba(139,92,246,.12), inset 0 1px 0 rgba(255,255,255,.05); }
 .prof-skin img{ height:140px; image-rendering:pixelated; }
 .prof-info{ flex:1 1 220px; min-width:0; }
-.prof-name{ font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:20px; color:#f8fafc; display:flex; align-items:center; gap:8px; min-width:0; overflow-wrap:anywhere; }
-.prof-title{ color:#94a3b8; font-size:13px; margin-top:4px; min-width:0; overflow-wrap:anywhere; }
-.prof-meta{ display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; min-width:0; }
+.prof-name-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; min-width:0; }
+.prof-name{ font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:22px; line-height:1.15; color:#f8fafc; display:flex; align-items:center; gap:8px; min-width:0; overflow-wrap:anywhere; }
+.prof-rank-badge{ display:inline-flex; align-items:center; justify-content:center; min-height:26px; padding:4px 10px; border-radius:999px;
+  background:linear-gradient(135deg, rgba(168,85,247,.25), rgba(59,130,246,.18)); border:1px solid rgba(168,85,247,.45);
+  color:#e9d5ff; font-size:10px; letter-spacing:.12em; font-weight:800; text-transform:uppercase; }
+.prof-title{ color:#94a3b8; font-size:13px; margin-top:6px; min-width:0; overflow-wrap:anywhere; }
+.prof-rank-line{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:12px; min-width:0; }
+.prof-meta{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; min-width:0; }
 .prof-meta .pts-badge, .prof-meta .cap, .prof-meta .pos{ flex-shrink:0; }
+.prof-stat-pill{ display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; min-height:26px;
+  background:rgba(255,255,255,.03); border:1px solid rgba(148,163,184,.2); color:#dbeafe; font-size:11px; font-weight:700; }
+.prof-stat-pill.muted{ color:#94a3b8; }
 .prof-tiers{ display:flex; flex-direction:column; gap:8px; min-width:0; }
 .prof-tier-row{ display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px;
   background:rgba(255,255,255,.025); border:1px solid rgba(139,92,246,.12); min-width:0;
@@ -877,13 +889,23 @@ function openPlayerModal(id){
   var rk = rankMap()[p.id];
   openModal(
     '<div class="modal-head"><h3>PLAYER PROFILE</h3><button type="button" class="x-btn" data-close>✕</button></div>' +
-    '<div class="prof-top">' +
-      '<div class="prof-skin">'+skinBody(p.username,140)+'</div>' +
-      '<div style="min-width:0">' +
-        '<div class="prof-name">'+esc(p.username)+(p.verified?' <span class="vbadge" title="Verified">✔</span>':'')+'</div>' +
-        '<div class="prof-title">'+esc(p.title||"—")+'</div>' +
-        '<div class="prof-meta">'+(rk?posBadge(rk,true):"")+' '+capBadge(p.region)+' <span class="pts-badge">'+ov.points+' pts</span> <span class="pts-title">'+esc(ov.title)+'</span><span class="text-[10px] text-slate-500">overall rank</span></div>' +
-      '</div></div>' +
+    '<div class="prof-card">' +
+      '<div class="prof-top">' +
+        '<div class="prof-skin">'+skinBody(p.username,140)+'</div>' +
+        '<div class="prof-info">' +
+          '<div class="prof-name-row">' +
+            '<div class="prof-name">'+esc(p.username)+(p.verified?' <span class="vbadge" title="Verified">✔</span>':'')+'</div>' +
+            '<span class="prof-rank-badge">'+esc((ov.title||"Unranked").toUpperCase())+'</span>' +
+          '</div>' +
+          '<div class="prof-title">'+esc(p.title||"—")+'</div>' +
+          '<div class="prof-rank-line">' +
+            '<div class="prof-meta">'+(rk?posBadge(rk,true):"")+' '+capBadge(p.region)+'</div>' +
+            '<span class="prof-stat-pill">'+ov.points+' pts</span>' +
+            '<span class="prof-stat-pill muted">overall rank</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
     '<div class="prof-tiers">' + PLAY_MODES.map(function(m){
       return '<div class="prof-tier-row"><span class="prof-mode">'+itemImg(m,22)+' '+esc(m)+'</span>'+tierBadge(p.tiers[m])+'</div>';
     }).join("") + '</div>' +
