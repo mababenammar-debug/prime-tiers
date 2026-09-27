@@ -300,6 +300,10 @@ body{ min-height:100vh; display:flex; flex-direction:column; }
 @keyframes fadeUp{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:translateY(0); } }
 .modal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
 .modal-head h3{ margin:0; font-family:'Space Grotesk',sans-serif; font-size:17px; color:#f1f5f9; }
+.profile-modal-head{ padding:10px 12px; border:1px solid rgba(148,163,184,.18); border-radius:12px;
+  background:linear-gradient(105deg, rgba(30,41,59,.7), rgba(15,23,42,.35)); }
+.profile-modal-head h3{ display:flex; align-items:center; gap:9px; color:#dbeafe; font-size:12px; line-height:1.2; font-weight:800; letter-spacing:.14em; }
+.profile-modal-head h3::before{ content:""; display:block; width:3px; height:17px; border-radius:3px; background:linear-gradient(180deg,#34d399,#60a5fa); }
 .modal-actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:16px; flex-wrap:wrap; }
 .field{ margin-bottom:12px; }
 .field label{ display:flex; align-items:center; gap:6px; font-size:11px; font-weight:700; letter-spacing:.06em; color:#94a3b8; margin-bottom:6px; text-transform:uppercase; }
@@ -539,6 +543,12 @@ function sanitize(arr){
     if(!p || typeof p !== "object") return;
     var u = String(p.username||"").replace(/[^A-Za-z0-9_]/g,"").slice(0,16);
     if(u.length < 2) return;
+    var title = String(p.title||"").slice(0,32);
+    var isRetired = !!p.isRetired;
+    if(title.trim().toLowerCase()==="retired"){
+      isRetired = true;
+      title = "";
+    }
     var t = {};
     PLAY_MODES.forEach(function(m){
       var tier = p.tiers && (p.tiers[m] || (m==="Spear Mace" && p.tiers["Netherite Spear"]));
@@ -551,9 +561,9 @@ function sanitize(arr){
     }
     out.push({
       id:String(p.id||("p"+Date.now()+Math.random())).slice(0,40),
-      username:u, title:String(p.title||"").slice(0,32),
+      username:u, title:title,
       region:REGIONS.indexOf(p.region)>=0?p.region:"NA",
-      verified:!!p.verified, banned:!!p.banned, isRetired:!!p.isRetired, tiers:t,
+      verified:!!p.verified, banned:!!p.banned, isRetired:isRetired, tiers:t,
       order:order
     });
   });
@@ -893,7 +903,7 @@ function openPlayerModal(id){
   var ov = { points:pts, title:overallTitle(pts) };
   var rk = rankMap()[p.id];
   openModal(
-    '<div class="modal-head"><h3>PLAYER PROFILE</h3><button type="button" class="x-btn" data-close>✕</button></div>' +
+    '<div class="modal-head profile-modal-head"><h3>PLAYER PROFILE</h3><button type="button" class="x-btn" data-close>✕</button></div>' +
     '<div class="prof-card">' +
       '<div class="prof-top">' +
         '<div class="prof-skin">'+skinBody(p.username,140)+'</div>' +
@@ -902,7 +912,7 @@ function openPlayerModal(id){
             '<div class="prof-name">'+esc(p.username)+(p.verified?' <span class="vbadge" title="Verified">✔</span>':'')+retiredBadge(p)+'</div>' +
             '<span><span class="prof-rank-caption">Competitive rank</span><span class="prof-rank-badge">'+esc(ov.title||"Unranked")+'</span></span>' +
           '</div>' +
-          '<div class="prof-title">'+esc(p.title||"—")+'</div>' +
+          (p.title?'<div class="prof-title">'+esc(p.title)+'</div>':"") +
         '</div>' +
       '</div>' +
       '<div class="prof-card-foot">' +
