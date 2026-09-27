@@ -212,6 +212,7 @@ body{ min-height:100vh; display:flex; flex-direction:column; }
 .strip-cell{ width:46px; display:flex; flex-direction:column; align-items:center; gap:4px; }
 .strip-cell .item-box{ width:20px; height:20px; opacity:.95; }
 .strip-cell .tier{ width:100%; min-width:0; height:18px; font-size:9px; padding:0 2px; }
+.strip-cell .retired-chip{ padding:2px 4px; font-size:7px; }
 .row-admin{ display:flex; gap:4px; }
 .adm-btn{ width:30px; height:30px; border-radius:8px; background:rgba(255,255,255,.05); border:1px solid rgba(139,92,246,.25); color:#cbd5e1; font-size:13px; transition:all .2s ease-in-out; }
 .adm-btn:hover{ border-color:rgba(var(--acc),.6); color:rgb(var(--acc)); }
@@ -302,8 +303,10 @@ body{ min-height:100vh; display:flex; flex-direction:column; }
 .modal-head h3{ margin:0; font-family:'Space Grotesk',sans-serif; font-size:17px; color:#f1f5f9; }
 .profile-modal-head{ padding:10px 12px; border:1px solid rgba(148,163,184,.18); border-radius:12px;
   background:linear-gradient(105deg, rgba(30,41,59,.7), rgba(15,23,42,.35)); }
-.profile-modal-head h3{ display:flex; align-items:center; gap:9px; color:#dbeafe; font-size:12px; line-height:1.2; font-weight:800; letter-spacing:.14em; }
+.profile-modal-head h3{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; color:#dbeafe; font-size:12px; line-height:1.2; font-weight:800; }
 .profile-modal-head h3::before{ content:""; display:block; width:3px; height:17px; border-radius:3px; background:linear-gradient(180deg,#34d399,#60a5fa); }
+.profile-modal-kicker{ color:#94a3b8; font-size:9px; letter-spacing:.14em; }
+.profile-modal-name{ color:#f8fafc; font-size:15px; font-weight:800; letter-spacing:0; overflow-wrap:anywhere; }
 .modal-actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:16px; flex-wrap:wrap; }
 .field{ margin-bottom:12px; }
 .field label{ display:flex; align-items:center; gap:6px; font-size:11px; font-weight:700; letter-spacing:.06em; color:#94a3b8; margin-bottom:6px; text-transform:uppercase; }
@@ -313,6 +316,7 @@ body{ min-height:100vh; display:flex; flex-direction:column; }
 .form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 .tier-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0 12px; }
 .check{ display:flex; align-items:center; gap:8px; font-size:13px; color:#cbd5e1; margin:4px 0 12px; cursor:pointer; }
+.mode-retired-check{ margin:6px 0 0; font-size:10px; color:#a1aab9; }
 .pf-err{ color:#fda4af; font-size:12px; min-height:16px; margin-top:4px; }
 .skin-preview{ display:flex; justify-content:center; margin:4px 0 14px; }
 .skin-preview img{ height:150px; image-rendering:pixelated; filter:drop-shadow(0 6px 16px rgba(0,0,0,.6)); }
@@ -512,7 +516,7 @@ function addLog(msg){ adminLog.unshift({ t:Date.now(), msg:msg }); if(adminLog.l
 function mk(id,username,region,title,verified,tiers){
   if(tiers["Netherite Spear"] && !tiers["Spear Mace"]) tiers["Spear Mace"] = tiers["Netherite Spear"];
   delete tiers["Netherite Spear"];
-  return { id:id, username:username, region:region, title:title, verified:verified, banned:false, isRetired:false, tiers:tiers, order:{} };
+  return { id:id, username:username, region:region, title:title, verified:verified, banned:false, isRetired:false, retiredModes:{}, tiers:tiers, order:{} };
 }
 function seedPlayers(){
   return [
@@ -545,14 +549,16 @@ function sanitize(arr){
     if(u.length < 2) return;
     var title = String(p.title||"").slice(0,32);
     var isRetired = !!p.isRetired;
-    if(title.trim().toLowerCase()==="retired"){
-      isRetired = true;
-      title = "";
-    }
+    var legacyRetired = title.trim().toLowerCase()==="retired";
+    if(legacyRetired) title = "";
     var t = {};
     PLAY_MODES.forEach(function(m){
       var tier = p.tiers && (p.tiers[m] || (m==="Spear Mace" && p.tiers["Netherite Spear"]));
       if(TIERS.indexOf(tier) >= 0) t[m] = tier;
+    });
+    var retiredModes = {};
+    PLAY_MODES.forEach(function(m){
+      if(t[m] && ((p.retiredModes && p.retiredModes[m]) || legacyRetired)) retiredModes[m] = true;
     });
     var order = (p.order && typeof p.order==="object") ? p.order : {};
     if(order["Spear Mace"]==null && order["Netherite Spear"]!=null){
@@ -563,7 +569,7 @@ function sanitize(arr){
       id:String(p.id||("p"+Date.now()+Math.random())).slice(0,40),
       username:u, title:title,
       region:REGIONS.indexOf(p.region)>=0?p.region:"NA",
-      verified:!!p.verified, banned:!!p.banned, isRetired:isRetired, tiers:t,
+      verified:!!p.verified, banned:!!p.banned, isRetired:isRetired, retiredModes:retiredModes, tiers:t,
       order:order
     });
   });
@@ -713,6 +719,7 @@ function tierBadge(t){ return '<span class="tier tier-'+(t?esc(t):"none")+'">'+(
 function tierBadgeXL(t){ return '<span class="tier tier-xl tier-'+(t?esc(t):"none")+'">'+(t?esc(t):"—")+'</span>'; }
 function capBadge(r){ return '<span class="cap cap-'+esc(r)+'">'+esc(r)+'</span>'; }
 function retiredBadge(p){ return p.isRetired ? '<span class="retired-chip" title="Retired player">RETIRED</span>' : ""; }
+function retiredModeBadge(p,mode){ return p.retiredModes && p.retiredModes[mode] ? '<span class="retired-chip" title="Retired from '+esc(mode)+'">RETIRED</span>' : ""; }
 function rkBadge(n){ return '<div class="rk '+(n===1?"rk-1":n===2?"rk-2":n===3?"rk-3":"rk-n")+'">'+n+'</div>'; }
 function posBadge(n,small){
   var cls = n===1?"pos-1":n===2?"pos-2":n===3?"pos-3":"pos-n";
@@ -782,7 +789,7 @@ function pcardHtml(x,mode){
     avatarImg(x.p,32) +
     '<div class="pc-main"><div class="pc-name">'+esc(x.p.username)+(x.p.verified?' <span class="vbadge">✔</span>':'')+retiredBadge(x.p)+'</div>' +
     '<div class="pc-title">'+esc(x.p.title||"—")+'</div></div>' +
-    '<div class="pc-side">'+capBadge(x.p.region)+tierBadge(x.tier)+'</div></div>';
+    '<div class="pc-side">'+capBadge(x.p.region)+tierBadge(x.tier)+retiredModeBadge(x.p,mode)+'</div></div>';
 }
 function tierBoard(mode){
   var cols = [1,2,3,4,5].map(function(b){
@@ -819,7 +826,7 @@ function overallList(){
         ' <span class="pts-badge">'+x.points+' pts</span> <span class="pts-title">'+esc(x.title)+'</span>'+'</div>' +
       '</div></div>' +
       '<div class="lb-strip">' + PLAY_MODES.map(function(m){
-        return '<span class="strip-cell">'+itemImg(m,20)+tierBadge(x.p.tiers[m])+'</span>';
+        return '<span class="strip-cell">'+itemImg(m,20)+tierBadge(x.p.tiers[m])+retiredModeBadge(x.p,m)+'</span>';
       }).join("") + '</div>' + adm + '</div>';
   }).join("") + (list.length ? "" : '<div class="empty-box">no search match</div>') + '</div>';
 }
@@ -903,7 +910,7 @@ function openPlayerModal(id){
   var ov = { points:pts, title:overallTitle(pts) };
   var rk = rankMap()[p.id];
   openModal(
-    '<div class="modal-head profile-modal-head"><h3>PLAYER PROFILE</h3><button type="button" class="x-btn" data-close>✕</button></div>' +
+    '<div class="modal-head profile-modal-head"><h3><span class="profile-modal-kicker">PLAYER PROFILE</span><span class="profile-modal-name">'+esc(p.username)+'</span></h3><button type="button" class="x-btn" data-close>✕</button></div>' +
     '<div class="prof-card">' +
       '<div class="prof-top">' +
         '<div class="prof-skin">'+skinBody(p.username,140)+'</div>' +
@@ -921,7 +928,7 @@ function openPlayerModal(id){
       '</div>' +
     '</div>' +
     '<div class="prof-tiers">' + PLAY_MODES.map(function(m){
-      return '<div class="prof-tier-row"><span class="prof-mode">'+itemImg(m,22)+' '+esc(m)+'</span>'+tierBadge(p.tiers[m])+'</div>';
+      return '<div class="prof-tier-row"><span class="prof-mode">'+itemImg(m,22)+' '+esc(m)+'</span>'+tierBadge(p.tiers[m])+retiredModeBadge(p,m)+'</div>';
     }).join("") + '</div>' +
     (p.banned ? '<div class="pf-err" style="margin-top:10px">This player is banned.</div>' : "")
   );
@@ -1005,10 +1012,11 @@ function openPlayerForm(id){
   var p = id ? findP(id) : null;
   var tierSel = PLAY_MODES.map(function(m,i){
     var cur = p ? (p.tiers[m]||"") : "";
+    var retired = p && p.retiredModes && p.retiredModes[m];
     return '<div class="field" style="margin-bottom:8px"><label>'+esc(m).toUpperCase()+'</label>' +
       '<select name="tier'+i+'"><option value="">Unranked</option>' +
       TIERS.map(function(t){ return '<option value="'+t+'"'+(t===cur?" selected":"")+'>'+t+'</option>'; }).join("") +
-      '</select></div>';
+      '</select><label class="check mode-retired-check"><input type="checkbox" name="retired'+i+'"'+(retired?" checked":"")+'> Retired in this mode</label></div>';
   }).join("");
   openModal(
     '<div class="modal-head"><h3>'+(p?"✎ EDIT PLAYER":"＋ ADD PLAYER")+'</h3><button type="button" class="x-btn" data-close>✕</button></div>' +
@@ -1040,7 +1048,14 @@ function savePlayerForm(f){
   var dup = state.players.find(function(p){ return p.username.toLowerCase()===username.toLowerCase() && p.id!==id; });
   if(dup){ formErr("That username is already on the list."); return; }
   var tiers = {};
-  PLAY_MODES.forEach(function(m,i){ var v = f.elements["tier"+i].value; if(TIERS.indexOf(v)>=0) tiers[m]=v; });
+  var retiredModes = {};
+  PLAY_MODES.forEach(function(m,i){
+    var v = f.elements["tier"+i].value;
+    if(TIERS.indexOf(v)>=0){
+      tiers[m]=v;
+      if(f.elements["retired"+i].checked) retiredModes[m]=true;
+    }
+  });
   var region = f.elements["pf-region"].value;
   var title = f.elements["pf-title"].value.slice(0,32);
   var verified = f.elements["pf-verified"].checked;
@@ -1048,11 +1063,11 @@ function savePlayerForm(f){
   var isRetired = f.elements["pf-retired"].checked;
   if(id){
     var p = findP(id); if(!p){ formErr("Player not found."); return; }
-    p.username=username; p.region=region; p.title=title; p.verified=verified; p.banned=banned; p.isRetired=isRetired; p.tiers=tiers;
+    p.username=username; p.region=region; p.title=title; p.verified=verified; p.banned=banned; p.isRetired=isRetired; p.retiredModes=retiredModes; p.tiers=tiers;
     addLog("Edited player "+username);
   }else{
     state.players.push({ id:"p"+Date.now().toString(36)+Math.floor(Math.random()*1e4),
-      username:username, region:region, title:title, verified:verified, banned:banned, isRetired:isRetired, tiers:tiers, order:{} });
+      username:username, region:region, title:title, verified:verified, banned:banned, isRetired:isRetired, retiredModes:retiredModes, tiers:tiers, order:{} });
     addLog("Added player "+username);
   }
   save(); closeModal(); render();
