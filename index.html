@@ -290,12 +290,8 @@ a{ color:inherit; }
 .tier-demo-row{ display:flex; align-items:center; gap:10px; margin:8px 0; flex-wrap:wrap; }
 
 /* ============ MODALS & FORMS ============ */
-.modal-back{ position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center;
-  padding:16px; overflow:hidden; isolation:isolate;
-  background:rgba(3,3,5,.97); }
-.modal{ width:min(560px,100%); max-height:calc(100dvh - 32px); overflow-y:auto;
-  overscroll-behavior:contain; -webkit-overflow-scrolling:touch; contain:layout style;
-  animation:fadeUp .25s ease-in-out; }
+.modal-back{ position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center; padding:16px; overflow:hidden; isolation:isolate; background:rgba(3,3,5,.97); }
+.modal{ width:min(560px,100%); max-height:calc(100dvh - 32px); overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; contain:layout style; animation:fadeUp .25s ease-in-out; }
 @keyframes fadeUp{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:translateY(0); } }
 .modal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
 .modal-head h3{ margin:0; font-family:'Space Grotesk',sans-serif; font-size:17px; color:#f1f5f9; }
@@ -363,10 +359,8 @@ a{ color:inherit; }
   .prof-top{ flex-direction:column; text-align:center; }
   .prof-meta{ justify-content:center; }
 }
-/* modal open — freeze page + kill blur behind */
 body.modal-open{ overflow:hidden; }
 body.modal-open .glass{ backdrop-filter:none !important; -webkit-backdrop-filter:none !important; }
-
 
 </style>
 </head>
@@ -1097,7 +1091,7 @@ window.addEventListener("unhandledrejection", function(e){ showErr(String(e.reas
 document.addEventListener("click", function(e){
   if(e.target.closest && e.target.closest("[data-close]")){ closeModal(); return; }
   if(e.target.classList && e.target.classList.contains("modal-back")){ closeModal(); return; }
-  document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeModal(); });
+
   var t = e.target;
   var lg = t.closest("[data-legal]");
   if(lg){ openLegal(lg.dataset.legal); return; }
@@ -1131,12 +1125,12 @@ document.addEventListener("click", function(e){
   if(t.closest("[data-add]")){ openPlayerForm(); return; }
   if(t.closest("[data-clearlog]")){ adminLog = []; render(); return; }
   if(t.closest("[data-logout]")){ logout(); return; }
-  if(t.closest("[data-close]")){ closeModal(); return; }
-  if(t.classList && t.classList.contains("modal-back")){ closeModal(); return; }
   var card = t.closest("[data-player]");
   if(card){ openPlayerModal(card.dataset.player); return; }
   if(t.closest("#mobile-links a")){ $("#mobile-links").classList.add("hidden"); }
 });
+
+document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeModal(); });
 
 document.addEventListener("submit", function(e){
   var f = e.target;
@@ -1161,7 +1155,6 @@ function updateSkinPreview(v){
   box.innerHTML = skinBody(name,150);
 }
 
-document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeModal(); });
 window.addEventListener("hashchange", route);
 $("#mobile-menu").addEventListener("click", function(){ $("#mobile-links").classList.toggle("hidden"); });
 
