@@ -217,6 +217,8 @@ body{ min-height:100vh; display:flex; flex-direction:column; }
 .adm-btn:hover{ border-color:rgba(var(--acc),.6); color:rgb(var(--acc)); }
 .vbadge{ color:rgb(var(--acc)); font-size:11px; text-shadow:0 0 8px rgba(var(--acc),.6); }
 .banned-chip{ font-size:9px; font-weight:800; letter-spacing:.1em; color:#fda4af; border:1px solid rgba(244,63,94,.5); border-radius:6px; padding:2px 6px; }
+.retired-chip{ display:inline-flex; align-items:center; border:1px solid rgba(148,163,184,.3); border-radius:999px; padding:2px 7px;
+  background:rgba(148,163,184,.08); color:#94a3b8; font-size:9px; line-height:1.2; font-weight:800; letter-spacing:.08em; white-space:nowrap; }
 
 /* ============ TIER COLUMN BOARD ============ */
 .tboard{ display:grid; grid-template-columns:repeat(auto-fit,minmax(185px,1fr)); gap:12px; margin-top:14px; }
@@ -313,31 +315,31 @@ body{ min-height:100vh; display:flex; flex-direction:column; }
 
 /* ============ PLAYER PROFILE MODAL ============ */
 .prof-card{ position:relative; display:flex; flex-direction:column; gap:16px; width:100%; min-width:0;
-  padding:18px 18px 14px; border-radius:18px; border:1px solid rgba(168,85,247,.28);
-  background:linear-gradient(180deg, rgba(15,23,42,.8), rgba(15,23,42,.64));
-  box-shadow:0 14px 34px rgba(15,23,42,.38), 0 0 0 1px rgba(168,85,247,.06); }
-.prof-top{ display:flex; gap:16px; align-items:center; margin:0; width:100%; min-width:0; flex-wrap:wrap; }
+  padding:20px; border-radius:18px; border:1px solid rgba(148,163,184,.2);
+  background:linear-gradient(145deg, rgba(23,31,48,.94), rgba(12,17,29,.9));
+  box-shadow:0 18px 40px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.055); }
+.prof-top{ display:flex; gap:18px; align-items:center; margin:0; width:100%; min-width:0; flex-wrap:wrap; }
 .prof-skin{ width:92px; height:150px; flex-shrink:0; display:grid; place-items:center; border-radius:14px;
   background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); border:1px solid rgba(139,92,246,.22); overflow:hidden;
   box-shadow:0 0 18px rgba(139,92,246,.12), inset 0 1px 0 rgba(255,255,255,.05); }
 .prof-skin img{ height:140px; image-rendering:pixelated; }
 .prof-info{ flex:1 1 220px; min-width:0; }
 .prof-name-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; min-width:0; }
-.prof-name{ font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:22px; line-height:1.15; color:#f8fafc; display:flex; align-items:center; gap:8px; min-width:0; overflow-wrap:anywhere; }
+.prof-name{ font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:26px; line-height:1.1; color:#f8fafc; display:flex; align-items:center; gap:8px; min-width:0; overflow-wrap:anywhere; }
 .prof-rank-badge{ display:inline-flex; align-items:center; justify-content:center; min-height:26px; padding:4px 10px; border-radius:999px;
   background:linear-gradient(135deg, rgba(168,85,247,.25), rgba(59,130,246,.18)); border:1px solid rgba(168,85,247,.45);
   color:#e9d5ff; font-size:10px; letter-spacing:.12em; font-weight:800; text-transform:uppercase; }
 .prof-rank-caption{ display:block; margin-bottom:4px; color:#a78bfa; font-size:9px; line-height:1; letter-spacing:.14em; font-weight:800; text-transform:uppercase; }
 .prof-title{ color:#94a3b8; font-size:13px; margin-top:6px; min-width:0; overflow-wrap:anywhere; }
-.prof-rank-line{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:12px; min-width:0; }
+.prof-card-foot{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding-top:14px; border-top:1px solid rgba(148,163,184,.15); }
+.prof-points{ display:inline-flex; align-items:baseline; gap:7px; padding:7px 14px; border-radius:12px;
+  background:linear-gradient(115deg, rgba(16,185,129,.14), rgba(16,185,129,.055)); border:1px solid rgba(52,211,153,.3);
+  box-shadow:0 5px 18px rgba(16,185,129,.08), inset 0 1px 0 rgba(255,255,255,.04); color:#d1fae5; }
+.prof-points-label{ align-self:center; margin-right:3px; color:#86efac; font-size:9px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
+.prof-points strong{ font-family:'Space Grotesk',sans-serif; font-size:28px; line-height:1; font-weight:800; color:#ecfdf5; }
+.prof-points-unit{ color:#a7f3d0; font-size:11px; font-weight:700; }
 .prof-meta{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; min-width:0; }
-.prof-meta .pts-badge, .prof-meta .cap, .prof-meta .pos{ flex-shrink:0; }
-.prof-stat-pill{ display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; min-height:26px;
-  background:rgba(255,255,255,.03); border:1px solid rgba(148,163,184,.2); color:#dbeafe; font-size:11px; font-weight:700; }
-.prof-stat-pill.muted{ color:#94a3b8; }
-.prof-overall{ display:inline-flex; align-items:baseline; gap:5px; padding:5px 9px; border-radius:9px;
-  background:rgba(148,163,184,.06); border:1px solid rgba(148,163,184,.14); color:#94a3b8; font-size:10px; }
-.prof-overall strong{ color:#cbd5e1; font-size:12px; font-weight:800; }
+.prof-meta .cap{ flex-shrink:0; }
 .prof-tiers{ display:flex; flex-direction:column; gap:8px; min-width:0; }
 .prof-tier-row{ display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px;
   background:rgba(255,255,255,.025); border:1px solid rgba(139,92,246,.12); min-width:0;
@@ -474,11 +476,12 @@ var FIREBASE_CONFIG = {
 
 var ITEM_BASE  = "https://raw.githubusercontent.com/PrismarineJS/minecraft-assets/master/data/1.21.4/items/";
 var ITEM_BASE2 = "https://raw.githubusercontent.com/PrismarineJS/minecraft-assets/master/data/1.20.4/items/";
+var ITEM_BASE3 = "https://raw.githubusercontent.com/PrismarineJS/minecraft-assets/master/data/1.21.11/items/";
 var SKIN_FACE_A = "https://crafthead.net/avatar/";
 var SKIN_FACE_B = "https://mc-heads.net/avatar/";
 var SKIN_BODY_A = "https://mc-heads.net/body/";
 var SKIN_BODY_B = "https://crafthead.net/body/";
-var MODES = ["Overall","Crystal","Sword","Axe","Mace","NetheritePot","Diamond Pot","UHC","Diamond SMP","SMP","Spear Mace"];
+var MODES = ["Overall","Crystal","Sword","Axe","Mace","NetheritePot","Diamond Pot","UHC","Diamond SMP","SMP","Netherite Spear"];
 var PLAY_MODES = MODES.slice(1);
 var TIERS = ["HT1","LT1","HT2","LT2","HT3","LT3","HT4","LT4","HT5","LT5"];
 var REGIONS = ["NA","EU","AS","AU"];
@@ -486,24 +489,9 @@ var MODE_ICONS = {
   "Overall":"nether_star.png", "Crystal":"end_crystal.png", "Sword":"diamond_sword.png",
   "Axe":"diamond_axe.png", "Mace":"mace.png", "NetheritePot":"netherite_helmet.png", "Diamond Pot":"splash_potion.png",
   "UHC":"golden_apple.png", "Diamond SMP":"diamond_helmet.png", "SMP":"ender_pearl.png",
-  "Spear Mace":"svg:netheritespear"
+  "Netherite Spear":"netherite_spear.png"
 };
 var ITEM_SCALE = { "diamond_helmet.png":.84, "splash_potion.png":.78,"netherite_helmet.png":.84, "nether_star.png":.9, "end_crystal.png":.9 };
-
-var NETHERITE_SPEAR_SVG =
- '<svg class="item-shadow" viewBox="0 0 16 16" width="100%" height="100%" shape-rendering="crispEdges" aria-hidden="true">'+
- '<rect x="14" y="0" width="1" height="1" fill="#cfc9cc"/><rect x="13" y="1" width="1" height="1" fill="#cfc9cc"/><rect x="12" y="2" width="1" height="1" fill="#cfc9cc"/>'+
- '<rect x="9" y="6" width="1" height="1" fill="#8a8082"/><rect x="10" y="5" width="1" height="1" fill="#8a8082"/><rect x="11" y="4" width="1" height="1" fill="#8a8082"/>'+
- '<rect x="12" y="3" width="1" height="1" fill="#8a8082"/><rect x="13" y="2" width="1" height="1" fill="#8a8082"/><rect x="14" y="1" width="1" height="1" fill="#8a8082"/>'+
- '<rect x="9" y="7" width="1" height="1" fill="#6b6265"/><rect x="10" y="6" width="1" height="1" fill="#6b6265"/><rect x="11" y="5" width="1" height="1" fill="#6b6265"/>'+
- '<rect x="12" y="4" width="1" height="1" fill="#6b6265"/><rect x="13" y="3" width="1" height="1" fill="#6b6265"/>'+
- '<rect x="10" y="7" width="1" height="1" fill="#453e40"/><rect x="11" y="6" width="1" height="1" fill="#453e40"/><rect x="12" y="5" width="1" height="1" fill="#453e40"/>'+
- '<rect x="8" y="7" width="1" height="1" fill="#6b6265"/>'+
- '<rect x="3" y="12" width="1" height="1" fill="#8a6a3d"/><rect x="4" y="11" width="1" height="1" fill="#8a6a3d"/><rect x="5" y="10" width="1" height="1" fill="#8a6a3d"/>'+
- '<rect x="6" y="9" width="1" height="1" fill="#8a6a3d"/><rect x="7" y="8" width="1" height="1" fill="#8a6a3d"/><rect x="2" y="13" width="1" height="1" fill="#8a6a3d"/>'+
- '<rect x="4" y="12" width="1" height="1" fill="#5f4526"/><rect x="5" y="11" width="1" height="1" fill="#5f4526"/><rect x="6" y="10" width="1" height="1" fill="#5f4526"/>'+
- '<rect x="7" y="9" width="1" height="1" fill="#5f4526"/><rect x="8" y="8" width="1" height="1" fill="#5f4526"/><rect x="3" y="13" width="1" height="1" fill="#5f4526"/>'+
- '</svg>';
 
 var DC_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.369a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037 19.736 19.736 0 0 0-4.885 1.515.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.058a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.029 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.055c.5-5.177-.838-9.674-3.549-13.66a.06.06 0 0 0-.031-.029zM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>';
 
@@ -515,7 +503,9 @@ function addLog(msg){ adminLog.unshift({ t:Date.now(), msg:msg }); if(adminLog.l
 
 /* ================= SEED DATA (shown until cloud has data) ================= */
 function mk(id,username,region,title,verified,tiers){
-  return { id:id, username:username, region:region, title:title, verified:verified, banned:false, tiers:tiers, order:{} };
+  if(tiers["Spear Mace"] && !tiers["Netherite Spear"]) tiers["Netherite Spear"] = tiers["Spear Mace"];
+  delete tiers["Spear Mace"];
+  return { id:id, username:username, region:region, title:title, verified:verified, banned:false, isRetired:false, tiers:tiers, order:{} };
 }
 function seedPlayers(){
   return [
@@ -547,13 +537,21 @@ function sanitize(arr){
     var u = String(p.username||"").replace(/[^A-Za-z0-9_]/g,"").slice(0,16);
     if(u.length < 2) return;
     var t = {};
-    PLAY_MODES.forEach(function(m){ if(p.tiers && TIERS.indexOf(p.tiers[m]) >= 0) t[m] = p.tiers[m]; });
+    PLAY_MODES.forEach(function(m){
+      var tier = p.tiers && (p.tiers[m] || (m==="Netherite Spear" && p.tiers["Spear Mace"]));
+      if(TIERS.indexOf(tier) >= 0) t[m] = tier;
+    });
+    var order = (p.order && typeof p.order==="object") ? p.order : {};
+    if(order["Netherite Spear"]==null && order["Spear Mace"]!=null){
+      order = Object.assign({},order);
+      order["Netherite Spear"] = order["Spear Mace"];
+    }
     out.push({
       id:String(p.id||("p"+Date.now()+Math.random())).slice(0,40),
       username:u, title:String(p.title||"").slice(0,32),
       region:REGIONS.indexOf(p.region)>=0?p.region:"NA",
-      verified:!!p.verified, banned:!!p.banned, tiers:t,
-      order:(p.order && typeof p.order==="object") ? p.order : {}
+      verified:!!p.verified, banned:!!p.banned, isRetired:!!p.isRetired, tiers:t,
+      order:order
     });
   });
   return out;
@@ -669,16 +667,14 @@ function movePlayer(id,where,mode,tier){
 /* ================= RENDER PIECES ================= */
 function itemImg(mode,size){
   var icon = MODE_ICONS[mode]; if(!icon) return "";
-  if(icon.indexOf("svg:")===0){
-    var svg = icon.slice(4)==="netheritespear" ? NETHERITE_SPEAR_SVG : "";
-    return '<span class="item-box" style="width:'+size+'px;height:'+size+'px">'+svg+'</span>';
-  }
   var sc = ITEM_SCALE[icon] || 1;
   var px = Math.round(size*sc);
-  var chain = [ITEM_BASE2+icon].map(encodeURIComponent).join("|");
+  var base = mode==="Netherite Spear" ? ITEM_BASE3 : ITEM_BASE;
+  var fallbackBase = mode==="Netherite Spear" ? ITEM_BASE : ITEM_BASE2;
+  var chain = [fallbackBase+icon].map(encodeURIComponent).join("|");
   var onerr = 'var f=(this.dataset.fb||"").split("|").filter(Boolean);if(f.length){this.dataset.fb=f.slice(1).join("|");this.src=decodeURIComponent(f[0]);}else{this.style.display="none";}';
   return '<span class="item-box" style="position:relative;width:'+size+'px;height:'+size+'px">' +
-    '<img class="pixel item-shadow" src="'+ITEM_BASE+icon+'" alt="'+esc(mode)+'" data-fb="'+chain+'" ' +
+    '<img class="pixel item-shadow" src="'+base+icon+'" alt="'+esc(mode)+'" data-fb="'+chain+'" ' +
     'style="position:absolute;inset:0;margin:auto;width:'+px+'px;height:'+px+'px" onerror="'+onerr+'"></span>';
 }
 function avatarImg(p,size){
@@ -703,6 +699,7 @@ function skinBody(username,h){
 function tierBadge(t){ return '<span class="tier tier-'+(t?esc(t):"none")+'">'+(t?esc(t):"—")+'</span>'; }
 function tierBadgeXL(t){ return '<span class="tier tier-xl tier-'+(t?esc(t):"none")+'">'+(t?esc(t):"—")+'</span>'; }
 function capBadge(r){ return '<span class="cap cap-'+esc(r)+'">'+esc(r)+'</span>'; }
+function retiredBadge(p){ return p.isRetired ? '<span class="retired-chip" title="Retired player">RETIRED</span>' : ""; }
 function rkBadge(n){ return '<div class="rk '+(n===1?"rk-1":n===2?"rk-2":n===3?"rk-3":"rk-n")+'">'+n+'</div>'; }
 function posBadge(n,small){
   var cls = n===1?"pos-1":n===2?"pos-2":n===3?"pos-3":"pos-n";
@@ -737,7 +734,7 @@ function viewHome(){
  var podium = '<div class="podium-row">' + rankedOverall().slice(0,3).map(function(x,i){
   return '<div class="glass podium-card row-lift" data-player="'+x.p.id+'">' + posBadge(i+1) +
     avatarImg(x.p,52) +
-    '<div class="pc-name" style="font-size:14px">'+esc(x.p.username)+(x.p.verified? '<span class="vbadge">✔</span>':'')+'</div>' +
+    '<div class="pc-name" style="font-size:14px">'+esc(x.p.username)+(x.p.verified? '<span class="vbadge">✔</span>':'')+retiredBadge(x.p)+'</div>' +
     '<div class="pts-badge">'+x.points+' pts</div>' +
     '<div class="pts-title">'+esc(x.title)+'</div>' +
     '</div>';
@@ -770,7 +767,7 @@ function pcardHtml(x,mode){
   return '<div class="pcard" data-player="'+x.p.id+'">' + adm +
     (rk ? posBadge(rk,true) : "") +
     avatarImg(x.p,32) +
-    '<div class="pc-main"><div class="pc-name">'+esc(x.p.username)+(x.p.verified?' <span class="vbadge">✔</span>':'')+'</div>' +
+    '<div class="pc-main"><div class="pc-name">'+esc(x.p.username)+(x.p.verified?' <span class="vbadge">✔</span>':'')+retiredBadge(x.p)+'</div>' +
     '<div class="pc-title">'+esc(x.p.title||"—")+'</div></div>' +
     '<div class="pc-side">'+capBadge(x.p.region)+tierBadge(x.tier)+'</div></div>';
 }
@@ -803,7 +800,7 @@ function overallList(){
     return '<div class="glass lb-row row-lift" data-player="'+x.p.id+'">' + posBadge(i+1) +
       avatarImg(x.p,40) +
       '<div class="lb-main"><div class="lb-id">' +
-        '<div class="lb-name">'+esc(x.p.username)+(x.p.verified?' <span class="vbadge">✔</span>':'')+(x.p.banned?' <span class="banned-chip">BANNED</span>':'')+'</div>' +
+        '<div class="lb-name">'+esc(x.p.username)+(x.p.verified?' <span class="vbadge">✔</span>':'')+retiredBadge(x.p)+(x.p.banned?' <span class="banned-chip">BANNED</span>':'')+'</div>' +
         '<div class="lb-sub">'+esc(x.p.title||"—")+' '+capBadge(x.p.region)+
         ' <span class="pts-badge">'+x.points+' pts</span> <span class="pts-title">'+esc(x.title)+'</span>'+'</div>' +
       '</div></div>' +
@@ -847,7 +844,7 @@ function viewAdmin(){
       (rmap[p.id] ? posBadge(rmap[p.id],true) : "") +
       avatarImg(p,36) +
       '<div class="lb-main"><div class="lb-id">' +
-        '<div class="lb-name">'+esc(p.username)+(p.verified?' <span class="vbadge">✔</span>':'')+(p.banned?' <span class="banned-chip">BANNED</span>':'')+'</div>' +
+        '<div class="lb-name">'+esc(p.username)+(p.verified?' <span class="vbadge">✔</span>':'')+retiredBadge(p)+(p.banned?' <span class="banned-chip">BANNED</span>':'')+'</div>' +
         '<div class="lb-sub">'+esc(p.title||"—")+' '+capBadge(p.region)+'</div>' +
       '</div></div>' +
       '<div class="row-admin">' +
@@ -890,7 +887,6 @@ function openPlayerModal(id){
   var p = findP(id); if(!p) return;
   var pts = pointsFor(p);
   var ov = { points:pts, title:overallTitle(pts) };
-  var rk = rankMap()[p.id];
   openModal(
     '<div class="modal-head"><h3>PLAYER PROFILE</h3><button type="button" class="x-btn" data-close>✕</button></div>' +
     '<div class="prof-card">' +
@@ -898,16 +894,15 @@ function openPlayerModal(id){
         '<div class="prof-skin">'+skinBody(p.username,140)+'</div>' +
         '<div class="prof-info">' +
           '<div class="prof-name-row">' +
-            '<div class="prof-name">'+esc(p.username)+(p.verified?' <span class="vbadge" title="Verified">✔</span>':'')+'</div>' +
+            '<div class="prof-name">'+esc(p.username)+(p.verified?' <span class="vbadge" title="Verified">✔</span>':'')+retiredBadge(p)+'</div>' +
             '<span><span class="prof-rank-caption">Competitive rank</span><span class="prof-rank-badge">'+esc(ov.title||"Unranked")+'</span></span>' +
           '</div>' +
           '<div class="prof-title">'+esc(p.title||"—")+'</div>' +
-          '<div class="prof-rank-line">' +
-            '<div class="prof-meta">'+capBadge(p.region)+'</div>' +
-            '<span class="prof-stat-pill">'+ov.points+' pts</span>' +
-            (rk?'<span class="prof-overall">Overall <strong>#'+rk+'</strong></span>':'') +
-          '</div>' +
         '</div>' +
+      '</div>' +
+      '<div class="prof-card-foot">' +
+        '<div class="prof-points"><span class="prof-points-label">Points</span><strong>'+ov.points+'</strong><span class="prof-points-unit">pts</span></div>' +
+        '<div class="prof-meta">'+capBadge(p.region)+'</div>' +
       '</div>' +
     '</div>' +
     '<div class="prof-tiers">' + PLAY_MODES.map(function(m){
@@ -942,7 +937,7 @@ function openLegal(kind){
       '<li>Those requests come from your browser directly to the API; we do not store anything extra about visitors.</li></ul>' +
       '<h4>Leaderboard data</h4>' +
       '<ul><li>The tier list is stored in a realtime cloud database (Google Firebase) and is publicly visible to all visitors of this site.</li>' +
-      '<li>It contains only: username, region tag, a short title, gamemode tiers, and ban/verified flags.</li></ul>' +
+      '<li>It contains only: username, region tag, a short title, gamemode tiers, and ban/verified/retired status flags.</li></ul>' +
       '<h4>Local storage (your browser)</h4>' +
       '<ul><li>Your browser stores admin-session and lockout data locally via <code>localStorage</code>. It never leaves your device.</li>' +
       '<li>You can clear it anytime via your browser settings.</li></ul>' +
@@ -1014,6 +1009,7 @@ function openPlayerForm(id){
       '<div class="skin-preview" id="skin-preview">' + (p ? skinBody(p.username,150) : '<div class="text-[11px] text-slate-500">type a username to preview skin</div>') + '</div>' +
       '<label class="check"><input type="checkbox" name="pf-verified"'+(p&&p.verified?" checked":"")+'> Verified badge</label>' +
       '<label class="check"><input type="checkbox" name="pf-banned"'+(p&&p.banned?" checked":"")+'> Banned</label>' +
+      '<label class="check"><input type="checkbox" name="pf-retired"'+(p&&p.isRetired?" checked":"")+'> Retired</label>' +
       '<div class="tier-grid">'+tierSel+'</div>' +
       '<div class="pf-err" id="pf-err"></div>' +
       '<div class="modal-actions"><button type="button" class="btn btn-ghost" data-close>Cancel</button>' +
@@ -1034,13 +1030,14 @@ function savePlayerForm(f){
   var title = f.elements["pf-title"].value.slice(0,32);
   var verified = f.elements["pf-verified"].checked;
   var banned = f.elements["pf-banned"].checked;
+  var isRetired = f.elements["pf-retired"].checked;
   if(id){
     var p = findP(id); if(!p){ formErr("Player not found."); return; }
-    p.username=username; p.region=region; p.title=title; p.verified=verified; p.banned=banned; p.tiers=tiers;
+    p.username=username; p.region=region; p.title=title; p.verified=verified; p.banned=banned; p.isRetired=isRetired; p.tiers=tiers;
     addLog("Edited player "+username);
   }else{
     state.players.push({ id:"p"+Date.now().toString(36)+Math.floor(Math.random()*1e4),
-      username:username, region:region, title:title, verified:verified, banned:banned, tiers:tiers, order:{} });
+      username:username, region:region, title:title, verified:verified, banned:banned, isRetired:isRetired, tiers:tiers, order:{} });
     addLog("Added player "+username);
   }
   save(); closeModal(); render();
