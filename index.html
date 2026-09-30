@@ -749,6 +749,7 @@ function resolveMojangSkin(img,render){
     img.src = MOJANG_SKIN_RENDERER+(render === "body" ? "/renders/body/" : "/avatars/")+uuid+(render === "body" ? "?overlay" : "?overlay&size="+(img.dataset.size || 64));
   });
 }
+window.resolveMojangSkin = resolveMojangSkin;
 function tierBadge(t){ return '<span class="tier tier-'+(t?esc(t):"none")+'">'+(t?esc(t):"—")+'</span>'; }
 function tierBadgeXL(t){ return '<span class="tier tier-xl tier-'+(t?esc(t):"none")+'">'+(t?esc(t):"—")+'</span>'; }
 function capBadge(r){ return '<span class="cap cap-'+esc(r)+'">'+esc(r)+'</span>'; }
@@ -1254,6 +1255,7 @@ function updateSkinPreview(v){
   if(name.length < 2){ box.innerHTML = '<div class="text-[11px] text-slate-500">type a username to preview skin</div>'; return; }
   box.innerHTML = skinBody(name,150);
 }
+window.updateSkinPreview = updateSkinPreview;
 
 window.addEventListener("hashchange", route);
 $("#mobile-menu").addEventListener("click", function(){ $("#mobile-links").classList.toggle("hidden"); });
