@@ -715,20 +715,20 @@ function avatarImg(p,size){
   var px = Math.max(32,Math.round(size*2));
   var name = encodeURIComponent(p.username);
   var chain = [SKIN_FACE_B+name+"/"+px].map(encodeURIComponent).join("|");
-  var onerr = 'var f=(this.dataset.fb||"").split("|").filter(Boolean);if(f.length){this.dataset.fb=f.slice(1).join("|");this.src=decodeURIComponent(f[0]);}else{this.style.display="none";}';
+  var onerr = 'var f=(this.dataset.fb||"").split("|").filter(Boolean); if(f.length){ var next=decodeURIComponent(f[0]); if(this.getAttribute("src") !== next){ this.dataset.fb = f.slice(1).join("|"); this.src = next; } else { this.style.display = "none"; } } else { this.style.display = "none"; }';
   return '<span class="av" style="width:'+size+'px;height:'+size+'px;border-radius:'+Math.max(6,Math.round(size*0.2))+'px">' +
     '<span class="av-letter" style="font-size:'+Math.round(size*0.45)+'px">'+esc(p.username.charAt(0).toUpperCase())+'</span>' +
     '<img class="pixel" style="border-radius:inherit" alt="'+esc(p.username)+'" ' +
-    'src="'+SKIN_FACE_A+name+"/"+px+'" data-username="'+esc(p.username)+'" data-size="'+px+'" data-fb="'+chain+'" onload="resolveMojangSkin(this,\'avatar\')" onerror="'+onerr+'"></span>';
+    'src="'+SKIN_FACE_A+name+"/"+px+'" data-username="'+esc(p.username)+'" data-size="'+px+'" data-fb="'+chain+'" onload="window.resolveMojangSkin && window.resolveMojangSkin(this,\'avatar\')" onerror="'+onerr+'"></span>';
 }
 function skinBody(username,h){
   var name = encodeURIComponent(username);
   var chain = [SKIN_BODY_B+name].map(encodeURIComponent).join("|");
-  var onerr = 'resolveMojangSkin(this,"body");var f=(this.dataset.fb||"").split("|").filter(Boolean);if(f.length){this.dataset.fb=f.slice(1).join("|");this.src=decodeURIComponent(f[0]);}else{this.style.display="none";}';
+  var onerr = 'var f=(this.dataset.fb||"").split("|").filter(Boolean); if(f.length){ var next=decodeURIComponent(f[0]); if(this.getAttribute("src") !== next){ this.dataset.fb = f.slice(1).join("|"); this.src = next; } else { this.style.display = "none"; } } else { this.style.display = "none"; }';
   return '<span style="position:relative;display:inline-block;width:'+Math.round(h*0.5)+'px;height:'+h+'px">' +
     '<span class="av-letter" style="border-radius:10px;background:rgba(255,255,255,.06);color:#e2e8f0;font-size:'+Math.round(h*0.26)+'px">'+esc(String(username).charAt(0).toUpperCase())+'</span>' +
     '<img class="pixel" style="position:absolute;inset:0;margin:auto;height:'+h+'px" alt="" ' +
-    'src="'+SKIN_BODY_A+name+'" data-username="'+esc(username)+'" data-fb="'+chain+'" onload="resolveMojangSkin(this,\'body\')" onerror="'+onerr+'"></span>';
+    'src="'+SKIN_BODY_A+name+'" data-username="'+esc(username)+'" data-fb="'+chain+'" onload="window.resolveMojangSkin && window.resolveMojangSkin(this,\'body\')" onerror="'+onerr+'"></span>';
 }
 function resolveMojangSkin(img,render){
   var username = img.dataset.username;
