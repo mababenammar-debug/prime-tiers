@@ -498,9 +498,6 @@ var SKIN_FACE_A = "https://crafthead.net/avatar/";
 var SKIN_FACE_B = "https://mc-heads.net/avatar/";
 var SKIN_BODY_A = "https://mc-heads.net/body/";
 var SKIN_BODY_B = "https://crafthead.net/body/";
-var MOJANG_PROFILE_API = "https://playerdb.co/api/player/minecraft/";
-var MOJANG_SKIN_RENDERER = "https://crafatar.com";
-var mojangProfileCache = Object.create(null);
 var MODES = ["Overall","Crystal","Sword","Axe","Mace","NetheritePot","Diamond Pot","UHC","Diamond SMP","SMP","Spear Mace"];
 var PLAY_MODES = MODES.slice(1);
 var TIERS = ["HT1","LT1","HT2","LT2","HT3","LT3","HT4","LT4","HT5","LT5"];
@@ -719,7 +716,7 @@ function avatarImg(p,size){
   return '<span class="av" style="width:'+size+'px;height:'+size+'px;border-radius:'+Math.max(6,Math.round(size*0.2))+'px">' +
     '<span class="av-letter" style="font-size:'+Math.round(size*0.45)+'px">'+esc(p.username.charAt(0).toUpperCase())+'</span>' +
     '<img class="pixel" style="border-radius:inherit" alt="'+esc(p.username)+'" ' +
-    'src="'+SKIN_FACE_A+name+"/"+px+'" data-username="'+esc(p.username)+'" data-size="'+px+'" data-fb="'+chain+'" onload="window.resolveMojangSkin && window.resolveMojangSkin(this,\'avatar\')" onerror="'+onerr+'"></span>';
+    'src="'+SKIN_FACE_A+name+"/"+px+'" data-fb="'+chain+'" onerror="'+onerr+'"></span>';
 }
 function skinBody(username,h){
   var name = encodeURIComponent(username);
@@ -728,28 +725,8 @@ function skinBody(username,h){
   return '<span style="position:relative;display:inline-block;width:'+Math.round(h*0.5)+'px;height:'+h+'px">' +
     '<span class="av-letter" style="border-radius:10px;background:rgba(255,255,255,.06);color:#e2e8f0;font-size:'+Math.round(h*0.26)+'px">'+esc(String(username).charAt(0).toUpperCase())+'</span>' +
     '<img class="pixel" style="position:absolute;inset:0;margin:auto;height:'+h+'px" alt="" ' +
-    'src="'+SKIN_BODY_A+name+'" data-username="'+esc(username)+'" data-fb="'+chain+'" onload="window.resolveMojangSkin && window.resolveMojangSkin(this,\'body\')" onerror="'+onerr+'"></span>';
+    'src="'+SKIN_BODY_A+name+'" data-fb="'+chain+'" onerror="'+onerr+'"></span>';
 }
-function resolveMojangSkin(img,render){
-  var username = img.dataset.username;
-  if(!username || img.dataset.uuidResolved) return;
-  img.dataset.uuidResolved = "pending";
-  var key = username.toLowerCase();
-  if(!mojangProfileCache[key]){
-    mojangProfileCache[key] = fetch(MOJANG_PROFILE_API+encodeURIComponent(username))
-      .then(function(response){ if(!response.ok) throw new Error("Profile lookup failed"); return response.json(); })
-      .then(function(result){
-        var player = result && result.data && result.data.player;
-        return player && (player.raw_id || player.id) ? String(player.raw_id || player.id).replace(/-/g,"") : null;
-      }).catch(function(){ return null; });
-  }
-  mojangProfileCache[key].then(function(uuid){
-    if(!uuid || !img.isConnected) return;
-    img.dataset.uuidResolved = "true";
-    img.src = MOJANG_SKIN_RENDERER+(render === "body" ? "/renders/body/" : "/avatars/")+uuid+(render === "body" ? "?overlay" : "?overlay&size="+(img.dataset.size || 64));
-  });
-}
-window.resolveMojangSkin = resolveMojangSkin;
 function tierBadge(t){ return '<span class="tier tier-'+(t?esc(t):"none")+'">'+(t?esc(t):"—")+'</span>'; }
 function tierBadgeXL(t){ return '<span class="tier tier-xl tier-'+(t?esc(t):"none")+'">'+(t?esc(t):"—")+'</span>'; }
 function capBadge(r){ return '<span class="cap cap-'+esc(r)+'">'+esc(r)+'</span>'; }
