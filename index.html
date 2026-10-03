@@ -700,7 +700,7 @@ function itemImg(mode,size){
   var onerr = 'var f=(this.dataset.fb||"").split("|").filter(Boolean);if(f.length){this.dataset.fb=f.slice(1).join("|");this.src=decodeURIComponent(f[0]);}else{this.style.display="none";}';
   return '<span class="item-box" style="position:relative;width:'+size+'px;height:'+size+'px">' +
     '<img class="pixel item-shadow" src="'+base+icon+'" alt="'+esc(mode)+'" data-fb="'+chain+'" ' +
-    'style="position:absolute;inset:0;margin:auto;width:'+px+'px;height:'+px+'px" onerror="'+onerr+'"></span>';
+    'style="position:absolute;inset:0;margin:auto;width:'+px+'px;height:'+px+'px" onerror="'+esc(onerr)+'"></span>';
 }
 function modeIcon(p,mode,size){
   var icon = itemImg(mode,size);
@@ -716,7 +716,7 @@ function avatarImg(p,size){
   return '<span class="av" style="width:'+size+'px;height:'+size+'px;border-radius:'+Math.max(6,Math.round(size*0.2))+'px">' +
     '<span class="av-letter" style="font-size:'+Math.round(size*0.45)+'px">'+esc(p.username.charAt(0).toUpperCase())+'</span>' +
     '<img class="pixel" style="border-radius:inherit" alt="'+esc(p.username)+'" ' +
-    'src="'+SKIN_FACE_A+name+"/"+px+'" data-fb="'+chain+'" onerror="'+onerr+'"></span>';
+    'src="'+SKIN_FACE_A+name+"/"+px+'" data-fb="'+chain+'" onerror="'+esc(onerr)+'"></span>';
 }
 function skinBody(username,h){
   var name = encodeURIComponent(username);
@@ -725,7 +725,7 @@ function skinBody(username,h){
   return '<span style="position:relative;display:inline-block;width:'+Math.round(h*0.5)+'px;height:'+h+'px">' +
     '<span class="av-letter" style="border-radius:10px;background:rgba(255,255,255,.06);color:#e2e8f0;font-size:'+Math.round(h*0.26)+'px">'+esc(String(username).charAt(0).toUpperCase())+'</span>' +
     '<img class="pixel" style="position:absolute;inset:0;margin:auto;height:'+h+'px" alt="" ' +
-    'src="'+SKIN_BODY_A+name+'" data-fb="'+chain+'" onerror="'+onerr+'"></span>';
+    'src="'+SKIN_BODY_A+name+'" data-fb="'+chain+'" onerror="'+esc(onerr)+'"></span>';
 }
 function tierBadge(t){ return '<span class="tier tier-'+(t?esc(t):"none")+'">'+(t?esc(t):"—")+'</span>'; }
 function tierBadgeXL(t){ return '<span class="tier tier-xl tier-'+(t?esc(t):"none")+'">'+(t?esc(t):"—")+'</span>'; }
@@ -968,7 +968,7 @@ function openLegal(kind){
       '<h4>What we process</h4>' +
       '<p>PrimeTiers has no accounts and collects no personal data (no emails, no passwords, no tracking).</p>' +
       '<h4>Minecraft usernames & skin APIs</h4>' +
-      '<ul><li>Player usernames are sent to PlayerDB to resolve their Mojang profile, and skin images are loaded from Crafatar, Crafthead, or MC-Heads solely to display avatar faces and body renders.</li>' +
+      '<ul><li>Player usernames are sent to Crafthead and MC-Heads to load skin images solely to display avatar faces and body renders.</li>' +
       '<li>Those requests come from your browser directly to the API; we do not store anything extra about visitors.</li></ul>' +
       '<h4>Leaderboard data</h4>' +
       '<ul><li>The tier list is stored in a realtime cloud database (Google Firebase) and is publicly visible to all visitors of this site.</li>' +
