@@ -6,17 +6,9 @@
 <meta name="color-scheme" content="dark">
 <meta name="referrer" content="no-referrer">
 <title>PrimeTiers — Minecraft PvP Tier List</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script>
-tailwind.config = { theme: { extend: {
-  colors: { base:'#030305', card:'#09080e', acc:'#10b981', vio:'#8b5cf6' },
-  fontFamily: { display:['Space Grotesk','sans-serif'], body:['Inter','sans-serif'] }
-}}};
-</script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <style>
 /* ============================================================
    PRIMETIERS — VOID BLACK / VIOLET BORDERS / EMERALD ACCENTS
@@ -386,6 +378,9 @@ body{ min-height:100vh; display:flex; flex-direction:column; }
 
 /* ============ MISC ============ */
 .empty-box{ border:1px dashed rgba(139,92,246,.3); border-radius:14px; padding:26px; text-align:center; color:#64748b; font-size:13px; margin-top:14px; }
+.empty-tier{ padding:24px 0; text-align:center; color:#475569; font-size:10px; }
+.form-note{ margin-top:8px; color:#64748b; font-size:10px; }
+.skin-preview-hint{ color:#64748b; font-size:11px; }
 .err-box{ border:1px solid rgba(244,63,94,.5); background:rgba(239,68,68,.08); color:#fda4af; padding:18px; border-radius:14px;
   font-family:monospace; font-size:12px; white-space:pre-wrap; margin:12px 14px 0; }
 .hidden{ display:none !important; }
@@ -516,6 +511,7 @@ var DC_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><p
 var state = { mode:"Overall", query:"", isAdmin:false, sessionUntil:0, players:[], cloudOk:false };
 var fdb = null;   /* firebase database handle (null if unavailable) */
 var adminLog = [];
+var firebaseSdkLoading = false;
 function addLog(msg){ adminLog.unshift({ t:Date.now(), msg:msg }); if(adminLog.length>40) adminLog.pop(); }
 
 /* ================= SEED DATA (shown until cloud has data) ================= */
@@ -598,6 +594,22 @@ function findP(id){ return state.players.find(function(p){ return p.id===id; });
 
 /* ================= FIREBASE SYNC (the automatic part) ================= */
 function initFirebase(){
+  if(firebaseSdkLoading) return;
+  if(window.firebase){ connectFirebase(); return; }
+  firebaseSdkLoading = true;
+  function loadScript(src,onload){
+    var script = document.createElement("script");
+    script.src = src;
+    script.async = true;
+    script.onload = onload;
+    script.onerror = function(){ addLog("Firebase SDK failed to load: "+src); };
+    document.head.appendChild(script);
+  }
+  loadScript("https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js", function(){
+    loadScript("https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js", connectFirebase);
+  });
+}
+function connectFirebase(){
   try{
     if(!window.firebase){ addLog("Firebase SDK not loaded"); return; }
     firebase.initializeApp(FIREBASE_CONFIG);
@@ -667,9 +679,10 @@ function cmpVec(a,b){
   return 0;
 }
 
-function rankMap(){
+function rankMap(rows){
+  if(!rows) rows = rankedOverall();
   var m = {};
-  rankedOverall().forEach(function(x,i){ m[x.p.id] = i+1; });
+  rows.forEach(function(x,i){ m[x.p.id] = i+1; });
   return m;
 }
 function ordKey(p,mode){ return (p.order && p.order[mode]!=null) ? p.order[mode] : 9999; }
@@ -699,7 +712,7 @@ function itemImg(mode,size){
   var chain = [fallbackBase+icon].map(encodeURIComponent).join("|");
   var onerr = 'var f=(this.dataset.fb||"").split("|").filter(Boolean);if(f.length){this.dataset.fb=f.slice(1).join("|");this.src=decodeURIComponent(f[0]);}else{this.style.display="none";}';
   return '<span class="item-box" style="position:relative;width:'+size+'px;height:'+size+'px">' +
-    '<img class="pixel item-shadow" src="'+base+icon+'" alt="'+esc(mode)+'" data-fb="'+chain+'" ' +
+    '<img class="pixel item-shadow" loading="lazy" decoding="async" src="'+base+icon+'" alt="'+esc(mode)+'" data-fb="'+chain+'" ' +
     'style="position:absolute;inset:0;margin:auto;width:'+px+'px;height:'+px+'px" onerror="'+esc(onerr)+'"></span>';
 }
 function modeIcon(p,mode,size){
@@ -715,7 +728,7 @@ function avatarImg(p,size){
   var onerr = 'var f=(this.dataset.fb||"").split("|").filter(Boolean); if(f.length){ var next=decodeURIComponent(f[0]); if(this.getAttribute("src") !== next){ this.dataset.fb = f.slice(1).join("|"); this.src = next; } else { this.style.display = "none"; } } else { this.style.display = "none"; }';
   return '<span class="av" style="width:'+size+'px;height:'+size+'px;border-radius:'+Math.max(6,Math.round(size*0.2))+'px">' +
     '<span class="av-letter" style="font-size:'+Math.round(size*0.45)+'px">'+esc(p.username.charAt(0).toUpperCase())+'</span>' +
-    '<img class="pixel" style="border-radius:inherit" alt="'+esc(p.username)+'" ' +
+    '<img class="pixel" loading="lazy" decoding="async" style="border-radius:inherit" alt="'+esc(p.username)+'" ' +
     'src="'+SKIN_FACE_A+name+"/"+px+'" data-fb="'+chain+'" onerror="'+esc(onerr)+'"></span>';
 }
 function skinBody(username,h){
@@ -724,7 +737,7 @@ function skinBody(username,h){
   var onerr = 'var f=(this.dataset.fb||"").split("|").filter(Boolean); if(f.length){ var next=decodeURIComponent(f[0]); if(this.getAttribute("src") !== next){ this.dataset.fb = f.slice(1).join("|"); this.src = next; } else { this.style.display = "none"; } } else { this.style.display = "none"; }';
   return '<span style="position:relative;display:inline-block;width:'+Math.round(h*0.5)+'px;height:'+h+'px">' +
     '<span class="av-letter" style="border-radius:10px;background:rgba(255,255,255,.06);color:#e2e8f0;font-size:'+Math.round(h*0.26)+'px">'+esc(String(username).charAt(0).toUpperCase())+'</span>' +
-    '<img class="pixel" style="position:absolute;inset:0;margin:auto;height:'+h+'px" alt="" ' +
+    '<img class="pixel" loading="lazy" decoding="async" style="position:absolute;inset:0;margin:auto;height:'+h+'px" alt="" ' +
     'src="'+SKIN_BODY_A+name+'" data-fb="'+chain+'" onerror="'+esc(onerr)+'"></span>';
 }
 function tierBadge(t){ return '<span class="tier tier-'+(t?esc(t):"none")+'">'+(t?esc(t):"—")+'</span>'; }
@@ -787,8 +800,8 @@ function viewHome(){
     '<h2 style="font-family:Space Grotesk;font-size:18px;margin:8px 0 0;text-align:center;color:#f1f5f9">CURRENT TOP 3 — OVERALL</h2>' +
     podium + discordBar();
 }
-function pcardHtml(x,mode){
-  var rk = rankMap()[x.p.id];
+function pcardHtml(x,mode,ranks){
+  var rk = ranks[x.p.id];
   var adm = state.isAdmin ?
     '<div class="mv-row" data-norow>' +
       '<button type="button" class="mv-btn" data-move="'+x.p.id+'" data-where="top"    data-tier="'+x.tier+'" title="Move to top">⤒</button>' +
@@ -804,6 +817,7 @@ function pcardHtml(x,mode){
     '<div class="pc-side">'+capBadge(x.p.region)+tierBadge(x.tier)+retiredModeBadge(x.p,mode)+'</div></div>';
 }
 function tierBoard(mode){
+  var ranks = rankMap();
   var cols = [1,2,3,4,5].map(function(b){
     var all = tierList(mode,"HT"+b).concat(tierList(mode,"LT"+b))
       .map(function(p){ return { p:p, tier:p.tiers[mode] }; });
@@ -812,15 +826,15 @@ function tierBoard(mode){
       '<div class="tcol-head"><div class="tcol-title">TIER '+b+'</div>' +
       '<div class="tcol-count">'+all.length+' PLAYER'+(all.length===1?"":"S")+'</div></div>' +
       '<div class="tcol-body">' +
-        (shown.length ? shown.map(function(x){ return pcardHtml(x,mode); }).join("")
-          : '<div class="text-center text-[10px] text-slate-600 py-6">'+(all.length?"no search match":"— empty —")+'</div>') +
+        (shown.length ? shown.map(function(x){ return pcardHtml(x,mode,ranks); }).join("")
+          : '<div class="empty-tier">'+(all.length?"no search match":"— empty —")+'</div>') +
       '</div></div>';
   });
   return '<div class="tboard">'+cols.join("")+'</div>';
 }
 function overallList(){
   var rows = rankedOverall();
-  var globalRanks = rankMap();
+  var globalRanks = rankMap(rows);
   if(!rows.length) return '<div class="empty-box">No players yet.</div>';
   var list = rows.filter(function(x){ return x.p.username.toLowerCase().indexOf(state.query)>=0; });
   return '<div class="lb-list">' + list.map(function(x,i){
@@ -1007,7 +1021,7 @@ function openLogin(){
       '<div class="pf-err" id="lock-msg">'+esc(lockTextNow())+'</div>' +
       '<div class="modal-actions"><button type="button" class="btn btn-ghost" data-close>Cancel</button>' +
       '<button type="submit" class="btn btn-primary">Unlock</button></div>' +
-      '<div class="text-[10px] text-slate-500" style="margin-top:8px">'+MAX_ATTEMPTS+' wrong attempts = 24-hour lockout · sessions last 30 min</div>' +
+      '<div class="form-note">'+MAX_ATTEMPTS+' wrong attempts = 24-hour lockout · sessions last 30 min</div>' +
     '</form>'
   );
   var inp = document.querySelector("#login-form input[name=pass]"); if(inp) inp.focus();
@@ -1042,7 +1056,7 @@ function openPlayerForm(id){
         '</select></div>' +
       '</div>' +
       '<div class="field"><label>TITLE</label><input name="pf-title" maxlength="32" value="'+(p?esc(p.title):"")+'" placeholder="e.g. Sword God"></div>' +
-      '<div class="skin-preview" id="skin-preview">' + (p ? skinBody(p.username,150) : '<div class="text-[11px] text-slate-500">type a username to preview skin</div>') + '</div>' +
+      '<div class="skin-preview" id="skin-preview">' + (p ? skinBody(p.username,150) : '<div class="skin-preview-hint">type a username to preview skin</div>') + '</div>' +
       '<label class="check"><input type="checkbox" name="pf-verified"'+(p&&p.verified?" checked":"")+'> Verified badge</label>' +
       '<label class="check"><input type="checkbox" name="pf-banned"'+(p&&p.banned?" checked":"")+'> Banned</label>' +
       '<label class="check"><input type="checkbox" name="pf-retired"'+(p&&p.isRetired?" checked":"")+'> Retired</label>' +
@@ -1229,7 +1243,7 @@ document.addEventListener("input", function(e){
 function updateSkinPreview(v){
   var box = $("#skin-preview"); if(!box) return;
   var name = String(v||"").replace(/[^A-Za-z0-9_]/g,"");
-  if(name.length < 2){ box.innerHTML = '<div class="text-[11px] text-slate-500">type a username to preview skin</div>'; return; }
+  if(name.length < 2){ box.innerHTML = '<div class="skin-preview-hint">type a username to preview skin</div>'; return; }
   box.innerHTML = skinBody(name,150);
 }
 window.updateSkinPreview = updateSkinPreview;
